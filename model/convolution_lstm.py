@@ -40,14 +40,14 @@ class ConvLSTMCell(nn.Module):
 
     def init_hidden(self, batch_size, hidden, shape):
         if self.Wci is None:
-            self.Wci = Variable(torch.zeros(1, hidden, shape[0], shape[1])).to("cpu")
-            self.Wcf = Variable(torch.zeros(1, hidden, shape[0], shape[1])).to("cpu")
-            self.Wco = Variable(torch.zeros(1, hidden, shape[0], shape[1])).to("cpu")
+            self.Wci = Variable(torch.zeros(1, hidden, shape[0], shape[1])).to(device)
+            self.Wcf = Variable(torch.zeros(1, hidden, shape[0], shape[1])).to(device)
+            self.Wco = Variable(torch.zeros(1, hidden, shape[0], shape[1])).to(device)
         else:
             assert shape[0] == self.Wci.size()[2], 'Input Height Mismatched!'
             assert shape[1] == self.Wci.size()[3], 'Input Width Mismatched!'
-        return (Variable(torch.zeros(batch_size, hidden, shape[0], shape[1])).to("cpu"),
-                Variable(torch.zeros(batch_size, hidden, shape[0], shape[1])).to("cpu"))
+        return (Variable(torch.zeros(batch_size, hidden, shape[0], shape[1])).to(device),
+                Variable(torch.zeros(batch_size, hidden, shape[0], shape[1])).to(device))
 
 
 class ConvLSTM(nn.Module):
@@ -84,7 +84,11 @@ class ConvLSTM(nn.Module):
 
                 # do forward
                 (h, c) = internal_state[i]
-                x, new_c = getattr(self, name)(x, h, c)
+#                 print(device)
+#                 h.to(device)
+#                 c.to(device)
+#                 print(x.device,h.device,c.device)
+                x, new_c = getattr(self, name)(x, h.cuda(), c.cuda())
                 internal_state[i] = (x, new_c)
             # only record effective steps
             if step in self.effective_step:

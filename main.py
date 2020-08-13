@@ -7,6 +7,7 @@ from utils.data import load_data
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def train(dataLoader, model, optimizer, epochs, device):
     model = model.to(device)
@@ -17,6 +18,7 @@ def train(dataLoader, model, optimizer, epochs, device):
             x = x.to(device)
             x = x.squeeze()
             #print(type(x))
+#             print(model(x))
             l = torch.mean((model(x)-x[-1].unsqueeze(0))**2)
             train_l_sum += l
             optimizer.zero_grad()
